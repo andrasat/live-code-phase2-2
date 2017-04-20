@@ -1,14 +1,17 @@
 const express = require('express')
+const Helpers = require('../helpers/verify')
+const User = require('../controllers/user')
+const Article = require('../controllers/article')
 const router = express.Router()
 
 // API Routes
 
 // User Routes
-router.get('/user')
-router.post('/register')
-router.post('/login')
-router.put('/user/:id')
-router.delete('/user/:id')
+router.get('/user', User.getUsers)
+router.post('/register', User.register)
+router.post('/login', User.login)
+router.put('/user/:id', User.editUser)
+router.delete('/user/:id', User.deleteUser)
 
 // Article Routes
 router.get('/article')
