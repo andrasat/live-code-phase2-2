@@ -47,12 +47,14 @@ module.exports = {
     })
   },
   getUsers: (req,res)=> {
-    User.find((err, users)=> {
-      if(err) {
-        res.status(400).send(err)
-      } else {
-        res.send(users)
-      }
+    User.find()
+      .populate('articles')
+      .exec((err, users)=> {
+        if(err) {
+          res.status(400).send(err)
+        } else {
+          res.send(users)
+        }
     })
   },
   editUser: (req,res)=> {

@@ -30,7 +30,7 @@ module.exports = {
   },
   decode: (token)=> {
     try {
-      return jwt.verify(token, process.env.SECRET_KEY)
+      return jwt.verify(token, process.env.SECRET)
     } catch(err) {
       return err
     }

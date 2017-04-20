@@ -7,7 +7,7 @@ module.exports = {
 
   getArticles: (req,res)=> {
     Article.find({})
-      .populate('author')
+      .populate('author', 'username')
       .exec((err,articles)=> {
         if(err) {
           console.log('Articles not found')
@@ -48,12 +48,12 @@ module.exports = {
       article.title= req.body.title ? req.body.title : article.title,
       article.content= req.body.content ? req.body.content : article.content,
       article.updatedAt= new Date()
-      article.save((err,artile)=> {
+      article.save((err,theArticle)=> {
         if(err) {
           console.log(err)
           res.status(400).send(err)
         } else {
-          console.log(artile)
+          console.log(theArticle)
           res.send('Update success')
         }
       })
