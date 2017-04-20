@@ -2,6 +2,14 @@
   <div class="profile">
     <h1 class="title main-title">{{ msg }}</h1>
     <div class="columns">
+      <div v-if="getSuccess" class="notification is-success has-text-centered">
+        <button class="delete"></button>
+        Success
+      </div>
+      <div v-if="getError" class="notification is-danger has-text-centered">
+        <button class="delete"></button>
+        Failed
+      </div>
       <div class="column is-three-quarters">
         <article class="box">
           <div v-if="userData" class="content is-large">
@@ -13,7 +21,7 @@
           <div class="content is-medium">
             <div v-for="article in userArticle">
               <p>{{ article.title }}
-                <a id="edit" class="button is-warning" @click="toModal()"><span class="icon is-medium"><i class="fa fa-pencil"></i></span></a>
+                <a id="edit" class="button is-warning" @click="toModal(article)"><span class="icon is-medium"><i class="fa fa-pencil"></i></span></a>
                 <a id="delete" class="button is-danger" @click="deletePost(article)"><span class="icon is-medium"><i class="fa fa-times"></i></span></a>
               </p>
             </div>
@@ -21,13 +29,40 @@
         </article>
       </div>
     </div>
-    <div class="modal">
-
+    <div :class="modalClass">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <article class="box">
+          <div class="media">
+            <form>
+              <div class="field">
+                <label class="label">Title</label>
+                <p class="control">
+                  <input class="input" type="text" v-model="userArticle.title">
+                </p>
+              </div>
+              <div class="field">
+                <label class="label">Content</label>
+                <p class="control">
+                  <input class="input" type="text" v-model="userArticle.title">
+                </p>
+              </div>
+              <div class="field is-grouped">
+                <p class="control button is-primary" @click="editArticle()">Submit</p>
+                <p class="control button" @click="cancelModal()">Cancel</p>
+              </div>
+            </form>
+          </div>
+        </article>
+      </div>
+      <button class="modal-close" @click="cancelModal()"></button>
     </div>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+import {mapActions} from 'vuex'
 export default {
   name: 'profile',
   data () {
@@ -44,9 +79,17 @@ export default {
         'modal' : true,
         'is-active': false
       }
-    }
+    },
+    ...mapGetters([
+      'getSuccess',
+      'getError'
+    ])
   },
   methods: {
+    ...mapActions([
+      'setSuccess',
+      'setError'
+    ]),
     getUser() {
       let self = this
       axios.get('http://localhost:3000/api/user/'+this.$route.params.username)
@@ -65,23 +108,52 @@ export default {
       if(confirmed) {
         axios.delete('http://localhost:3000/api/article/'+data._id)
           .then((res)=> {
-            alert('Deleted !')
-            window.location.reload()
+            self.articles.splice(self.articles.indexOf(data), 1)
+            self.setSuccess(true)
+            setTimeout(()=> {
+              self.setSuccess(false)
+              self.$route.push('/list')
+            }, 2500)
           })
           .catch((res)=> {
-            alert('Delete fail')
+            self.setError(true)
+            setTimeout(()=> {
+              self.setError(false)
+              window.location.reload()
+            }, 3500)
           })
       }
     },
-    editArticle(data) {
+    editArticle() {
       let self = this
       axios.put('http://localhost:3000/api/article'+data._id, {
-        title: self.userArticle.title
+        title: self.userArticle.title,
         content: self.userArticle.content
       })
+        .then((res)=> {
+          self.articles.splice(self.articles.indexOf(data), 1, self.userArticle)
+          self.userArticle = {}
+          self.setSuccess(true)
+          setTimeout(()=> {
+            self.setSuccess(false)
+            self.$route.push('/list')
+          }, 2500)
+        })
+        .catch((err)=> {
+          self.setError(true)
+          setTimeout(()=> {
+            self.setError(false)
+            window.location.reload()
+          }, 3500)
+        })
     },
-    toModal() {
-      
+    toModal(data) {
+      this.modalClass['is-active'] = true
+      this.selectedArticle = data
+    },
+    cancelModal() {
+      this.modalClass['is-active'] = false
+      this.selectedArticle = {}
     }
   },
   mounted() {
