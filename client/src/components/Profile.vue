@@ -140,7 +140,7 @@ export default {
       }, {headers: {'token': localStorage.getItem('token')}})
         .then((res)=> {
           console.log(res)
-          self.userArticle.splice(self.articles.indexOf(self.selectedArticle), 1, self.selectedArticle)
+          self.userArticle.splice(self.userArticle.indexOf(self.selectedArticle), 1, self.selectedArticle)
           self.selectedArticle = {}
           self.setSuccess(true)
           self.changeModalStatus(false)
