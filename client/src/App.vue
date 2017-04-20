@@ -7,7 +7,7 @@
       <div class="nav-right">
         <router-link v-if="getLoginStatus == false" to="/register" class="nav-item">Register</router-link>
         <router-link v-if="getLoginStatus == false" to="/login" class="nav-item">Login</router-link>
-        <router-link v-if="getLoginStatus" to="/" class="nav-item">Post Article</router-link>
+        <router-link v-if="getLoginStatus" to="/post" class="nav-item">Post Article</router-link>
         <router-link v-if="getLoginStatus" :to="{name: 'Profile', params :{username: getUserNow}}" class="nav-item">Profile</router-link>
         <a v-if="getLoginStatus" @click="logout()" class="nav-item">Logout</a>
       </div>
@@ -34,6 +34,7 @@ export default {
     logout() {
       localStorage.removeItem('token')
       localStorage.removeItem('username')
+      this.$router.push('/')
       window.location.reload()
     }
   },

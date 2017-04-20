@@ -4,7 +4,11 @@ export const state = {
   isError : false,
   userToken : localStorage.getItem('token') || null,
   userNow : localStorage.getItem('username') || null,
-  isLogin: false
+  isLogin: false,
+  modalClass: {
+    'modal': true,
+    'is-active': false
+  }
 }
 
 export const getters = {
@@ -19,6 +23,9 @@ export const getters = {
   },
   getUserNow(state) {
     return state.userNow
+  },
+  getModalClass(state) {
+    return state.modalClass
   }
 }
 
@@ -35,6 +42,9 @@ export const mutations = {
     } else {
       state.isLogin = false
     }
+  },
+  SET_MODALACTIVE(state, value) {
+    state.modalClass['is-active'] = value
   }
 }
 
@@ -47,5 +57,8 @@ export const actions = {
   },
   ifLogin({commit}) {
     commit('IF_LOGIN')
+  },
+  changeModalStatus({commit}, value) {
+    commit('SET_MODALACTIVE', value)
   }
 }

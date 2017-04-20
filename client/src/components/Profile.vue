@@ -24,14 +24,14 @@
             <div v-for="article in userArticle">
               <p>{{ article.title }}
                 <a id="edit" class="button is-warning" @click="toModal(article)"><span class="icon is-medium"><i class="fa fa-pencil"></i></span></a>
-                <a id="delete" class="button is-danger" @click="deletePost(article)"><span class="icon is-medium"><i class="fa fa-times"></i></span></a>
+                <a id="delete" class="button is-danger" @click="deleteArticle(article)"><span class="icon is-medium"><i class="fa fa-times"></i></span></a>
               </p>
             </div>
           </div>
         </article>
       </div>
     </div>
-    <div :class="modalClass">
+    <div :class="getModalClass">
       <div class="modal-background"></div>
       <div class="modal-content">
         <div v-if="getSuccess" class="notification is-success has-text-centered">
@@ -48,13 +48,13 @@
               <div class="field">
                 <label class="label">Title</label>
                 <p class="control">
-                  <input class="input" type="text" v-model="userArticle.title">
+                  <input class="input" type="text" v-model="selectedArticle.title">
                 </p>
               </div>
               <div class="field">
                 <label class="label">Content</label>
                 <p class="control">
-                  <input class="input" type="text" v-model="userArticle.title">
+                  <textarea class="textarea" v-model="selectedArticle.content"></textarea>
                 </p>
               </div>
               <div class="field is-grouped">
@@ -84,21 +84,17 @@ export default {
     }
   },
   computed: {
-    modalClass() {
-      return {
-        'modal' : true,
-        'is-active': false
-      }
-    },
     ...mapGetters([
       'getSuccess',
-      'getError'
+      'getError',
+      'getModalClass'
     ])
   },
   methods: {
     ...mapActions([
       'setSuccess',
-      'setError'
+      'setError',
+      'changeModalStatus'
     ]),
     getUser() {
       let self = this
@@ -116,13 +112,14 @@ export default {
       let self = this,
           confirmed = confirm('are you sure?')
       if(confirmed) {
-        axios.delete('http://localhost:3000/api/article/'+data._id)
+        axios.delete('http://localhost:3000/api/article/'+data._id,
+        {headers: {'token': localStorage.getItem('token')}})
           .then((res)=> {
             self.articles.splice(self.articles.indexOf(data), 1)
             self.setSuccess(true)
             setTimeout(()=> {
               self.setSuccess(false)
-              self.$route.push('/list')
+              window.location.reload()
             }, 2500)
           })
           .catch((res)=> {
@@ -136,33 +133,33 @@ export default {
     },
     editArticle() {
       let self = this
-      axios.put('http://localhost:3000/api/article'+data._id, {
-        title: self.userArticle.title,
-        content: self.userArticle.content
-      })
+      axios.put('http://localhost:3000/api/article/'+self.selectedArticle._id, {
+        title: self.selectedArticle.title,
+        content: self.selectedArticle.content
+      }, {headers: {'token': localStorage.getItem('token')}})
         .then((res)=> {
-          self.articles.splice(self.articles.indexOf(data), 1, self.userArticle)
-          self.userArticle = {}
+          console.log(res)
+          self.userArticle.splice(self.articles.indexOf(self.selectedArticle), 1, self.selectedArticle)
+          self.selectedArticle = {}
           self.setSuccess(true)
+          self.changeModalStatus(false)
           setTimeout(()=> {
             self.setSuccess(false)
-            self.$route.push('/list')
           }, 2500)
         })
         .catch((err)=> {
           self.setError(true)
           setTimeout(()=> {
             self.setError(false)
-            window.location.reload()
           }, 3500)
         })
     },
     toModal(data) {
-      this.modalClass['is-active'] = true
+      this.changeModalStatus(true)
       this.selectedArticle = data
     },
     cancelModal() {
-      this.modalClass['is-active'] = false
+      this.changeModalStatus(false)
       this.selectedArticle = {}
     }
   },
@@ -180,10 +177,10 @@ export default {
 .is-three-quarters {
   margin:auto;
 }
+/*#edit {
+  float: right;
+}
 #delete {
   float: right;
-}
-#edit {
-  float: right;
-}
+}*/
 </style>

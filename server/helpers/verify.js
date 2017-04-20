@@ -4,6 +4,7 @@ require('dotenv').config()
 
 module.exports = {
   verifyUser: (req,res,next)=> {
+    console.log(req.headers.token)
     jwt.verify(req.headers.token, process.env.SECRET, (err, decoded)=> {
       if(decoded) {
         Article.findById(req.params.id, (err,article)=> {
