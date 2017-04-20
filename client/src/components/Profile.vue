@@ -13,11 +13,13 @@
       <div class="column is-three-quarters">
         <article class="box">
           <div v-if="userData" class="content is-large">
-            <h2 class="subtitle">{{ userData.username }}</h2>
-            <p>You asked : {{ userData.postId.length }} questions</p>
+            <h2 class="subtitle is-3">{{ userData.username }}</h2>
+            <p>Your name : {{ userData.name }}</p>
+            <p>Your email : {{ userData.email }}</p>
+            <p>Your post : {{ userData.articles.length }} articles</p>
           </div>
         </article>
-        <article v-if="userQuestions.length > 0" class="box">
+        <article v-if="userArticle.length > 0" class="box">
           <div class="content is-medium">
             <div v-for="article in userArticle">
               <p>{{ article.title }}
@@ -32,6 +34,14 @@
     <div :class="modalClass">
       <div class="modal-background"></div>
       <div class="modal-content">
+        <div v-if="getSuccess" class="notification is-success has-text-centered">
+          <button class="delete"></button>
+          Success
+        </div>
+        <div v-if="getError" class="notification is-danger has-text-centered">
+          <button class="delete"></button>
+          Failed
+        </div>
         <article class="box">
           <div class="media">
             <form>

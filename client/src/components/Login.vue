@@ -5,17 +5,18 @@
         <p class="subtitle is-4 has-text-centered">{{ msg }}</p>
         <label class="label">Email</label>
         <p class="control">
-          <input class="input" type="text" v-model="email" placeholder="Email input">
+          <input :class="inputClass" @keyup="validateEmail()" type="text" v-model="email" placeholder="Email input" required>
         </p>
+        <p v-if="invalidMail" class="help is-danger">This email is invalid</p>
       </div>
       <div class="field">
         <label class="label">Password</label>
         <p class="control">
-          <input class="input" type="password" v-model="password" placeholder="Input Password">
+          <input class="input" type="password" v-model="password" placeholder="Input Password" required>
         </p>
       </div>
       <div class="field is-grouped">
-        <p class="control button is-primary">Submit</p>
+        <p class="control button is-primary" @click="login()">Submit</p>
         <router-link to="/register" class="control button outlined">or Register</router-link>
       </div>
     </div>
@@ -41,14 +42,21 @@ export default {
     return {
       msg: 'Login Here',
       email: '',
-      password: ''
+      password: '',
+      invalidMail : false
     }
   },
   computed: {
     ...mapGetters([
       'getSuccess',
       'getError'
-    ])
+    ]),
+    inputClass() {
+      return {
+        'input': true,
+        'is-danger': false
+      }
+    }
   },
   methods: {
     ...mapActions([
@@ -62,12 +70,13 @@ export default {
         password: self.password
       })
         .then((res)=> {
+          console.log(res)
           localStorage.setitem('token', res.data.token)
           localStorage.setitem('username', res.data.username)
           self.setSuccess(true)
           setTimeout(()=> {
             self.setSuccess(false)
-            self.$route.push('/list')
+            self.$route.push({name: 'Main'})
           }, 2500)
         })
         .catch((err)=> {
@@ -77,6 +86,18 @@ export default {
             window.location.reload()
           }, 3500)
         })
+    },
+    validateEmail() {
+      let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      if(regex.test(this.email) || this.email == '') {
+        console.log('right')
+        this.inputClass['is-danger'] = false
+        this.invalidMail = false
+      } else {
+        console.log('wrong')
+        this.inputClass['is-danger'] = true
+        this.invalidMail = true
+      }
     }
   }
 }

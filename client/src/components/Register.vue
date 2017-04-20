@@ -53,6 +53,7 @@ export default {
   data () {
     return {
       msg: 'Register Here',
+      name: '',
       email: '',
       password: '',
       username: '',

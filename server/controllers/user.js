@@ -25,11 +25,11 @@ module.exports = {
     })
   },
   login: (req,res)=> {
-    User.findOne({username: req.body.username}, (err,user)=> {
+    User.findOne({email: req.body.email}, (err,user)=> {
       if(err) {
         console.log(err)
         res.status(400).send(err)
-      } else {
+      } else if(user){
         bcrypt.compare(req.body.password, user.password, (err, response)=> {
           if(err) {
             console.log(err)
@@ -40,9 +40,12 @@ module.exports = {
           } else {
             console.log('Login Success')
             let token = jwt.sign({id: user._id, username: user.username, name: user.name}, process.env.SECRET)
-            res.send({'token': token, 'username': username})
+            res.send({'token': token, 'username': user.username})
           }
         })
+      } else {
+        console.log('Not found')
+        res.status(400).send(err)
       }
     })
   },
