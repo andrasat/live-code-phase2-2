@@ -14,10 +14,10 @@ router.put('/user/:id', User.editUser)
 router.delete('/user/:id', User.deleteUser)
 
 // Article Routes
-router.get('/article')
-router.post('/article/:userId')
-router.put('/article/:id')
-router.delete('/article/:id')
+router.get('/article', Article.getArticles)
+router.post('/article', Article.newArticle)
+router.put('/article/:id', Helpers.verifyUser, Article.editArticle)
+router.delete('/article/:id', Helpers.verifyUser, Article.deleteArticle)
 
 
 

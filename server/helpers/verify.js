@@ -3,15 +3,23 @@ const Article = require('../models/article')
 require('dotenv').config()
 
 module.exports = {
-  verify: (req,res,next)=> {
+  verifyUser: (req,res,next)=> {
     jwt.verify(req.headers.token, process.env.SECRET, (err, decoded)=> {
       if(decoded) {
-        Article.findOne({author: decoded.id}, (err,article)=> {
+        Article.findById(req.params.id, (err,article)=> {
           if(err) {
             console.log(err)
             res.status(401).send(err)
+          } else if(!article){
+            console.log('Not found')
+            res.send(401).send('Not found')
           } else {
-            next()
+            if(decoded.id == article.author) {
+              next()
+            } else {
+              console.log('Not the author')
+              res.send(401).send('Not found')
+            }
           }
         })
       } else {
@@ -19,5 +27,12 @@ module.exports = {
         res.status(401).send('Restricted Access')
       }
     })
+  },
+  decode: (token)=> {
+    try {
+      return jwt.verify(token, process.env.SECRET_KEY)
+    } catch(err) {
+      return err
+    }
   }
 }

@@ -25,8 +25,26 @@ module.exports = {
     })
   },
   login: (req,res)=> {
-    let token = jwt.sign({id: req.user._id, username: req.user.username, name: req.user.name}, process.env.SECRET)
-    res.send({'token': token, userId: req.user._id})
+    User.findOne({username: req.body.username}, (err,user)=> {
+      if(err) {
+        console.log(err)
+        res.status(400).send(err)
+      } else {
+        bcrypt.compare(req.body.password, user.password, (err, response)=> {
+          if(err) {
+            console.log(err)
+            res.status(400).send(err)
+          } else if(!response) {
+            console.log('Wrong Password')
+            res.status(403).send(false)
+          } else {
+            console.log('Login Success')
+            let token = jwt.sign({id: user._id, username: user.username, name: user.name}, process.env.SECRET)
+            res.send(token)
+          }
+        })
+      }
+    })
   },
   getUsers: (req,res)=> {
     User.find((err, users)=> {
