@@ -25,12 +25,48 @@ module.exports = {
     })
   },
   login: (req,res)=> {
-    let token = jwt.sign({username: req.user.username}, process.env.SECRET)
-    res.send(token)
+    let token = jwt.sign({id: req.user._id, username: req.user.username, name: req.user.name}, process.env.SECRET)
+    res.send({'token': token, userId: req.user._id})
+  },
+  getUsers: (req,res)=> {
+    User.find((err, users)=> {
+      if(err) {
+        res.status(400).send(err)
+      } else {
+        res.send(users)
+      }
+    })
   },
   editUser: (req,res)=> {
-    User.findByIdAndUpdate(req.params.id, {
-      
+    let saltRounds = 10
+    bcrypt.hash(req.body.password, saltRounds, (err, hash)=> {
+      User.findById(req.params.id, (err, user)=> {
+        if(err) res.status(400).send(err)
+        user.name= req.body.name ? req.body.name : user.name,
+        user.username= req.body.username ? req.body.username : user.username,
+        user.email= req.body.email ? req.body.email : user.email,
+        user.password= hash ? hash : user.password
+        user.save((err,user)=> {
+          if(err) {
+            console.log(err)
+            res.status(400).send(err)
+          } else {
+            console.log(user)
+            res.send('Update success')
+          }
+        })
+      })
+    })
+  },
+  deleteUser: (req,res)=> {
+    User.findByIdAndRemove(req.params.id, (err,user)=> {
+      if(err) {
+        console.log(err)
+        res.status(400).send(err)
+      } else {
+        console.log(user)
+        res.send('Delete success')
+      }
     })
   }
 

@@ -12,7 +12,7 @@ router.delete('/user/:id')
 
 // Article Routes
 router.get('/article')
-router.post('/article')
+router.post('/article/:userId')
 router.put('/article/:id')
 router.delete('/article/:id')
 
