@@ -2,7 +2,9 @@
 export const state = {
   isSuccess : false,
   isError : false,
-  isLogin : localStorage.getItem('token') || null
+  userToken : localStorage.getItem('token') || null,
+  userNow : localStorage.getItem('username') || null,
+  isLogin: false
 }
 
 export const getters = {
@@ -11,6 +13,12 @@ export const getters = {
   },
   getError(state) {
     return state.isError
+  },
+  getLoginStatus(state) {
+    return state.isLogin
+  },
+  getUserNow(state) {
+    return state.userNow
   }
 }
 
@@ -22,7 +30,9 @@ export const mutations = {
     state.isError = value
   },
   IF_LOGIN(state) {
-    
+    if(state.userToken) {
+      state.isLogin = true
+    }
   }
 }
 
@@ -32,5 +42,8 @@ export const actions = {
   },
   setError({commit}, value) {
     commit('SET_ISERROR', value)
+  },
+  ifLogin({commit}) {
+    commit('IF_LOGIN')
   }
 }

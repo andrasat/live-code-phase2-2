@@ -62,7 +62,8 @@ export default {
         password: self.password
       })
         .then((res)=> {
-          localStorage.setitem('token', res.data)
+          localStorage.setitem('token', res.data.token)
+          localStorage.setitem('username', res.data.username)
           self.setSuccess(true)
           setTimeout(()=> {
             self.setSuccess(false)

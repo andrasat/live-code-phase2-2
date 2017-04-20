@@ -8,6 +8,7 @@ const router = express.Router()
 
 // User Routes
 router.get('/user', User.getUsers)
+router.get('/user/:username', User.getOneUser)
 router.post('/register', User.register)
 router.post('/login', User.login)
 router.put('/user/:id', User.editUser)

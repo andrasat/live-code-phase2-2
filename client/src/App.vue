@@ -5,8 +5,10 @@
         <router-link to="/" class="nav-item title is-3">MY CMS</router-link>
       </div>
       <div class="nav-right">
-        <router-link to="/register" class="nav-item">Register</router-link>
-        <router-link to="/login" class="nav-item">Login</router-link>
+        <router-link v-if="getLoginStatus == false" to="/register" class="nav-item">Register</router-link>
+        <router-link v-if="getLoginStatus == false" to="/login" class="nav-item">Login</router-link>
+        <router-link v-if="getLoginStatus" :to="{name: 'Profile', params :{username: getUserNow}}" class="nav-item">Profile</router-link>
+        <router-link v-if="getLoginStatus" to="/" @click="" class="nav-item">Logout</router-link>
       </div>
     </nav>
     <router-view></router-view>
@@ -14,8 +16,28 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+import {mapActions} from 'vuex'
 export default {
-  name: 'app'
+  name: 'app',
+  computed: {
+    ...mapGetters([
+      'getLoginStatus',
+      'getUserNow'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'ifLogin'
+    ]),
+    logout() {
+      localStorage.removeItem('token')
+      window.location.reload()
+    }
+  },
+  mounted() {
+    this.ifLogin()
+  }
 }
 </script>
 

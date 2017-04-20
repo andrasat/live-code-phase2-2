@@ -40,7 +40,7 @@ module.exports = {
           } else {
             console.log('Login Success')
             let token = jwt.sign({id: user._id, username: user.username, name: user.name}, process.env.SECRET)
-            res.send(token)
+            res.send({'token': token, 'username': username})
           }
         })
       }
@@ -56,6 +56,17 @@ module.exports = {
           res.send(users)
         }
     })
+  },
+  getOneUser: (req,res)=> {
+    User.findOne({username: req.params.username})
+      .populate('articles')
+      .exec((err,user)=> {
+        if(err) {
+          res.status(400).send(err)
+        } else {
+          res.send(user)
+        }
+      })
   },
   editUser: (req,res)=> {
     let saltRounds = 10
