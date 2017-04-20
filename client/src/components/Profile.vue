@@ -48,13 +48,13 @@
               <div class="field">
                 <label class="label">Title</label>
                 <p class="control">
-                  <input class="input" type="text" v-model="selectedArticle.title">
+                  <input class="input" type="text" v-model="selectedArticle.title" required>
                 </p>
               </div>
               <div class="field">
                 <label class="label">Content</label>
                 <p class="control">
-                  <textarea class="textarea" v-model="selectedArticle.content"></textarea>
+                  <textarea class="textarea" v-model="selectedArticle.content" required></textarea>
                 </p>
               </div>
               <div class="field is-grouped">
