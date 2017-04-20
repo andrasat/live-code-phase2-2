@@ -76,7 +76,7 @@ export default {
           self.setSuccess(true)
           setTimeout(()=> {
             self.setSuccess(false)
-            this.$router.push('Main')
+            this.$router.push('/')
             window.location.reload()
           }, 2500)
         })
