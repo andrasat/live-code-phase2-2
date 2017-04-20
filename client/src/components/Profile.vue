@@ -2,14 +2,6 @@
   <div class="profile">
     <h1 class="title main-title">{{ msg }}</h1>
     <div class="columns">
-      <div v-if="getSuccess" class="notification is-success has-text-centered">
-        <button class="delete"></button>
-        Success
-      </div>
-      <div v-if="getError" class="notification is-danger has-text-centered">
-        <button class="delete"></button>
-        Failed
-      </div>
       <div class="column is-three-quarters">
         <article class="box">
           <div v-if="userData" class="content is-large">
@@ -17,6 +9,14 @@
             <p>Your name : {{ userData.name }}</p>
             <p>Your email : {{ userData.email }}</p>
             <p>Your post : {{ userData.articles.length }} articles</p>
+          </div>
+          <div v-if="getSuccess" class="notification is-success has-text-centered">
+            <button class="delete"></button>
+            Success
+          </div>
+          <div v-if="getError" class="notification is-danger has-text-centered">
+            <button class="delete"></button>
+            Failed
           </div>
         </article>
         <article v-if="userArticle.length > 0" class="box">
@@ -115,14 +115,15 @@ export default {
         axios.delete('http://localhost:3000/api/article/'+data._id,
         {headers: {'token': localStorage.getItem('token')}})
           .then((res)=> {
-            self.articles.splice(self.articles.indexOf(data), 1)
+            self.userArticle.splice(self.userArticle.indexOf(data), 1)
             self.setSuccess(true)
             setTimeout(()=> {
               self.setSuccess(false)
               window.location.reload()
             }, 2500)
           })
-          .catch((res)=> {
+          .catch((err)=> {
+            console.log(err)
             self.setError(true)
             setTimeout(()=> {
               self.setError(false)
