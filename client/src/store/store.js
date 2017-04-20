@@ -32,6 +32,8 @@ export const mutations = {
   IF_LOGIN(state) {
     if(state.userToken) {
       state.isLogin = true
+    } else {
+      state.isLogin = false
     }
   }
 }

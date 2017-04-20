@@ -70,16 +70,18 @@ export default {
         password: self.password
       })
         .then((res)=> {
-          console.log(res)
-          localStorage.setitem('token', res.data.token)
-          localStorage.setitem('username', res.data.username)
+          // console.log(res)
+          localStorage.setItem('token', res.data.token)
+          localStorage.setItem('username', res.data.username)
           self.setSuccess(true)
           setTimeout(()=> {
             self.setSuccess(false)
-            self.$route.push({name: 'Main'})
+            this.$router.push('Main')
+            window.location.reload()
           }, 2500)
         })
         .catch((err)=> {
+          console.log(err)
           self.setError(true)
           setTimeout(()=> {
             self.setError(false)
